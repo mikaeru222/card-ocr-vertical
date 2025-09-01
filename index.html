@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>カード番号OCR（リアルタイム縦埋め版）</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <meta name="theme-color" content="#0d0d0d">
+  <link rel="stylesheet" href="style.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+  <script defer src="ocr.js"></script>
+  <script defer src="app.js"></script>
+</head>
+<body>
+  <header>
+    <h1>カード番号OCR（リアルタイム縦埋め版）</h1>
+    <div id="progress">列 1 / 行 1（1列=100） 合計 0</div>
+    <button id="installBtn" hidden>ホーム画面に追加</button>
+  </header>
+
+  <main>
+    <section class="panel">
+      <label class="filelabel">
+        カメラで撮影
+        <input id="cameraInput" type="file" accept="image/*" capture="environment" />
+      </label>
+
+      <div class="preview">
+        <h2>抽出結果</h2>
+        <div>OCR候補: <span id="ocrResult"></span></div>
+        <div class="row">
+          <label class="inline">手入力: <input id="manualInput" type="text" placeholder="番号を入力（例: 041 / 69/70 / 40P）"></label>
+        </div>
+        <div class="row">
+          <label class="inline"><input type="checkbox" id="appendStay"> 同じセルに追記して留まる</label>
+        </div>
+        <div class="row gap">
+          <button id="confirmBtn">確定</button>
+          <button id="skipBtn">スキップ</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>表（No + 12列 / 1列=100行）</h2>
+      <table id="resultTable">
+        <thead>
+          <tr>
+            <th>No</th>
+            <th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>7</th><th>8</th><th>9</th><th>10</th><th>11</th><th>12</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+      <div class="actions">
+        <button id="exportCsvBtn" disabled>CSVダウンロード</button>
+        <button id="clearBtn" disabled>クリア</button>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <small>オフライン対応（PWA）。</small>
+  </footer>
+
+  <script>
+    if ('serviceWorker' in navigator) {
+      addEventListener('load', () => navigator.serviceWorker.register('./sw.js'));
+    }
+  </script>
+</body>
+</html>

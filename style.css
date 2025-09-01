@@ -1,0 +1,17 @@
+*{box-sizing:border-box}
+body{margin:0;font-family:-apple-system,system-ui,"Hiragino Kaku Gothic ProN",Meiryo,sans-serif;background:#111;color:#eee}
+header,footer{padding:12px;background:#0d0d0d;position:sticky;top:0;z-index:1}
+h1{margin:0;font-size:18px}
+main{padding:12px}
+.panel{background:#1a1a1a;padding:12px;border-radius:10px;margin-bottom:12px}
+.filelabel{display:inline-block;background:#2a2a2a;padding:12px 14px;border-radius:8px;border:1px solid #333;cursor:pointer;font-weight:600}
+.filelabel input{display:none}
+.preview{margin-top:12px}
+button{background:#2a2a2a;color:#eee;border:1px solid #333;border-radius:8px;padding:8px 12px;font-weight:600}
+button:disabled{opacity:.5}
+table{width:100%;border-collapse:collapse;margin-top:10px}
+th,td{border:1px solid #333;padding:6px;text-align:center;font-size:14px}
+thead th{background:#222;position:sticky;top:54px}
+.row{margin-top:8px}
+.inline{display:inline-flex;align-items:center;gap:8px}
+.gap{display:flex;gap:8px;margin-top:10px}
