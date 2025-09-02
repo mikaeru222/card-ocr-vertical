@@ -1,16 +1,18 @@
 const cameraInput = document.getElementById('cameraInput');
-const ocrResultEl = document.getElementById('ocrResult');
 const manualInput = document.getElementById('manualInput');
 const appendStay = document.getElementById('appendStay');
+const pad3 = document.getElementById('pad3');
 const confirmBtn = document.getElementById('confirmBtn');
 const skipBtn = document.getElementById('skipBtn');
 const progressEl = document.getElementById('progress');
+const candWrap = document.getElementById('candidates');
 const tableBody = document.querySelector('#resultTable tbody');
 const exportCsvBtn = document.getElementById('exportCsvBtn');
 const clearBtn = document.getElementById('clearBtn');
 
 const ROWS = 100;
 const COLS = 12;
+
 let results = Array.from({length: ROWS}, () => Array(COLS).fill(''));
 let currentIndex = 0;
 
@@ -21,32 +23,66 @@ cameraInput.addEventListener('change', async (e) => {
   const file = e.target.files && e.target.files[0];
   if (!file) return;
   const text = await OCR.recognize(file);
-  const number = OCR.pickCardNumber(text);
-  ocrResultEl.textContent = number || '（未検出）';
+
+  // 候補を複数提示
+  const cands = OCR.extractCandidates(text);
+  renderCandidates(cands);
+
+  // 手入力は空にしてフォーカス
   manualInput.value = '';
   manualInput.focus();
+
+  // 連続撮影できるようにリセット
+  cameraInput.value = '';
 });
+
+function renderCandidates(list){
+  candWrap.innerHTML = '';
+  if (!list || !list.length) {
+    candWrap.textContent = '（候補なし）';
+    return;
+  }
+  // 上位5件までボタン化
+  list.slice(0, 5).forEach(val => {
+    const v = pad3.checked ? normalizeTo3(val) : val;
+    const btn = document.createElement('button');
+    btn.className = 'cand';
+    btn.textContent = v;
+    btn.addEventListener('click', () => {
+      manualInput.value = v;
+    });
+    candWrap.appendChild(btn);
+  });
+}
 
 confirmBtn.addEventListener('click', () => {
   if (currentIndex >= ROWS * COLS) return;
-  const number = (manualInput.value || ocrResultEl.textContent || '').trim();
-  if (!number || number === '（未検出）') return;
+
+  let val = (manualInput.value || '').trim();
+  if (!val) return;
+
+  if (pad3.checked) val = normalizeTo3(val);
+
   const col = Math.floor(currentIndex / ROWS);
   const row = currentIndex % ROWS;
+
+  // 追記 or 置換
   if (results[row][col]) {
-    results[row][col] = results[row][col] + '/' + number;
+    results[row][col] = results[row][col] + '/' + val;
   } else {
-    results[row][col] = number;
+    results[row][col] = val;
   }
+
   renderTable();
+
   if (!appendStay.checked) {
     currentIndex = Math.min(currentIndex + 1, ROWS * COLS);
   }
   updateProgress();
+
   exportCsvBtn.disabled = false;
   clearBtn.disabled = false;
-  cameraInput.value = '';
-  ocrResultEl.textContent = '';
+
   manualInput.value = '';
 });
 
@@ -55,6 +91,16 @@ skipBtn.addEventListener('click', () => {
   currentIndex = Math.min(currentIndex + 1, ROWS * COLS);
   updateProgress();
 });
+
+function normalizeTo3(s){
+  // "69/70" はそのまま、単独数字は3桁ゼロ埋め、"40P"はPを残して数字部を3桁化
+  const t = String(s).toUpperCase().replace(/\s+/g,'');
+  if (/\d+\/\d+/.test(t)) return t; // スラッシュ併記は触らない
+  const mP = t.match(/^(\d{1,3})P$/);
+  if (mP) return mP[1].padStart(3,'0') + 'P';
+  if (/^\d{1,3}$/.test(t)) return t.padStart(3,'0');
+  return t;
+}
 
 function updateProgress(){
   const col = Math.floor(currentIndex / ROWS) + 1;
@@ -86,6 +132,7 @@ function renderTable(){
   }
 }
 
+// CSV出力
 exportCsvBtn.addEventListener('click', () => {
   let csv = 'No,' + Array.from({length:COLS},(_,i)=>`${i+1}`).join(',') + '\n';
   for (let r=0; r<ROWS; r++){
@@ -95,7 +142,7 @@ exportCsvBtn.addEventListener('click', () => {
   const blob = new Blob([csv], {type:'text/csv'});
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
-  a.href = url; a.download = 'card_numbers.csv';
+  a.href = url; a.download = `card_numbers_${fmtDate()}.csv`;
   document.body.appendChild(a);
   a.click();
   a.remove();
@@ -109,8 +156,6 @@ clearBtn.addEventListener('click', () => {
   updateProgress();
   exportCsvBtn.disabled = true;
   clearBtn.disabled = true;
-  cameraInput.value='';
-  ocrResultEl.textContent='';
   manualInput.value='';
 });
 
@@ -121,6 +166,13 @@ function csvEsc(s){
   return t;
 }
 
+function fmtDate(){
+  const d = new Date();
+  const p = (n)=>String(n).padStart(2,'0');
+  return `${d.getFullYear()}${p(d.getMonth()+1)}${p(d.getDate())}_${p(d.getHours())}${p(d.getMinutes())}`;
+}
+
+// PWA install
 let deferredPrompt;
 const installBtn = document.getElementById('installBtn');
 window.addEventListener('beforeinstallprompt',(e)=>{

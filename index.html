@@ -27,19 +27,26 @@
 
       <div class="preview">
         <h2>抽出結果</h2>
-        <div>OCR候補: <span id="ocrResult"></span></div>
+        <div class="row">
+          <div>OCR候補（上ほど有力）:</div>
+          <div id="candidates" class="cand-wrap"></div>
+        </div>
+
         <div class="row">
           <label class="inline">手入力:
             <input id="manualInput"
                    type="text"
                    inputmode="numeric"
                    pattern="[0-9P/]*"
-                   placeholder="番号（例: 041 / 69/70 / 40P）">
+                   placeholder="番号（例: 001 / 69/70 / 40P）">
           </label>
         </div>
-        <div class="row">
+
+        <div class="row toggles">
+          <label class="inline"><input type="checkbox" id="pad3" checked> 3桁に揃える（例: 1→001）</label>
           <label class="inline"><input type="checkbox" id="appendStay"> 同じセルに追記して留まる</label>
         </div>
+
         <div class="row gap">
           <button id="confirmBtn">確定</button>
           <button id="skipBtn">スキップ</button>
