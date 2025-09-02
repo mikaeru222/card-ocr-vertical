@@ -28,11 +28,19 @@
       <div class="preview">
         <h2>抽出結果</h2>
 
+        <!-- 撮影プレビュー＋ステータス -->
+        <div class="row">
+          <img id="shotThumb" alt="preview" style="max-width:160px;display:none;border-radius:6px;border:1px solid #333;">
+          <span id="statusBadge" class="badge" style="display:none">OCR中…</span>
+        </div>
+
+        <!-- 候補一覧 -->
         <div class="row">
           <div>OCR候補（上ほど有力）:</div>
           <div id="candidates" class="cand-wrap"></div>
         </div>
 
+        <!-- 手入力 -->
         <div class="row">
           <label class="inline">手入力:
             <input id="manualInput"
@@ -43,11 +51,13 @@
           </label>
         </div>
 
+        <!-- オプション -->
         <div class="row toggles">
-          <label class="inline"><input type="checkbox" id="pad3" checked> 3桁に揃える（例: 1→001）</label>
+          <label class="inline"><input type="checkbox" id="pad3" checked> 3桁に揃える</label>
           <label class="inline"><input type="checkbox" id="appendStay"> 同じセルに追記して留まる</label>
         </div>
 
+        <!-- 操作ボタン -->
         <div class="row gap">
           <button id="confirmBtn">確定</button>
           <button id="skipBtn">スキップ</button>
@@ -80,7 +90,7 @@
         <button id="clearBtn" disabled>クリア</button>
       </div>
       <div id="saveHint" class="tips" style="margin-top:8px;opacity:.85;">
-        自動セーブ有効：作業内容は端末内に自動保存・復元されます（CSV保存も併用推奨）
+        自動セーブ有効：作業内容は端末内に保存・復元されます（CSV保存も併用推奨）
       </div>
     </section>
   </main>
@@ -88,6 +98,9 @@
   <footer>
     <small>オフライン対応（PWA）。</small>
   </footer>
+
+  <!-- トースト通知 -->
+  <div id="toast" class="toast" aria-live="polite"></div>
 
   <script>
     if ('serviceWorker' in navigator) {
