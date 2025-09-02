@@ -27,6 +27,7 @@
 
       <div class="preview">
         <h2>抽出結果</h2>
+
         <div class="row">
           <div>OCR候補（上ほど有力）:</div>
           <div id="candidates" class="cand-wrap"></div>
@@ -68,9 +69,18 @@
           <tbody></tbody>
         </table>
       </div>
+
       <div class="actions">
         <button id="exportCsvBtn" disabled>CSVダウンロード</button>
+        <button id="backupBtn">途中保存（CSV）</button>
+        <label class="filelabel">
+          途中読み込み（CSV）
+          <input id="importCsvInput" type="file" accept=".csv" />
+        </label>
         <button id="clearBtn" disabled>クリア</button>
+      </div>
+      <div id="saveHint" class="tips" style="margin-top:8px;opacity:.85;">
+        自動セーブ有効：作業内容は端末内に自動保存・復元されます（CSV保存も併用推奨）
       </div>
     </section>
   </main>
