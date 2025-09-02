@@ -29,7 +29,13 @@
         <h2>抽出結果</h2>
         <div>OCR候補: <span id="ocrResult"></span></div>
         <div class="row">
-          <label class="inline">手入力: <input id="manualInput" type="text" placeholder="番号を入力（例: 041 / 69/70 / 40P）"></label>
+          <label class="inline">手入力:
+            <input id="manualInput"
+                   type="text"
+                   inputmode="numeric"
+                   pattern="[0-9P/]*"
+                   placeholder="番号（例: 041 / 69/70 / 40P）">
+          </label>
         </div>
         <div class="row">
           <label class="inline"><input type="checkbox" id="appendStay"> 同じセルに追記して留まる</label>
@@ -43,15 +49,18 @@
 
     <section class="panel">
       <h2>表（No + 12列 / 1列=100行）</h2>
-      <table id="resultTable">
-        <thead>
-          <tr>
-            <th>No</th>
-            <th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>7</th><th>8</th><th>9</th><th>10</th><th>11</th><th>12</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
+      <div class="table-wrap">
+        <table id="resultTable">
+          <thead>
+            <tr>
+              <th>No</th>
+              <th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th>
+              <th>7</th><th>8</th><th>9</th><th>10</th><th>11</th><th>12</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
       <div class="actions">
         <button id="exportCsvBtn" disabled>CSVダウンロード</button>
         <button id="clearBtn" disabled>クリア</button>

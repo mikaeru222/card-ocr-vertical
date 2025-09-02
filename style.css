@@ -15,3 +15,45 @@ thead th{background:#222;position:sticky;top:54px}
 .row{margin-top:8px}
 .inline{display:inline-flex;align-items:center;gap:8px}
 .gap{display:flex;gap:8px;margin-top:10px}
+
+/* ===== スマホ見やすさ向上 ===== */
+.table-wrap {
+  width: 100%;
+  overflow-x: auto;            /* 横スクロール可 */
+  -webkit-overflow-scrolling: touch;
+  border: 1px solid #333;
+  border-radius: 8px;
+}
+thead th {
+  position: sticky;
+  top: 54px;
+  z-index: 2;
+}
+th:first-child, td:first-child {
+  position: sticky;
+  left: 0;
+  background: #1a1a1a;
+  z-index: 1;
+}
+button, .filelabel {
+  min-height: 44px;
+  font-size: 16px;
+}
+.preview input[type="text"] {
+  height: 40px;
+  padding: 6px 10px;
+  font-size: 16px;
+}
+th, td {
+  padding: 10px 8px;
+  font-size: 15px;
+}
+@media (max-width: 640px) {
+  h1 { font-size: 16px; }
+  header, footer { padding: 10px; }
+  .panel { padding: 10px; }
+  th, td { padding: 8px 6px; font-size: 14px; }
+  .actions { flex-wrap: wrap; }
+  .filelabel { width: 100%; text-align: center; }
+  #progress { font-size: 13px; opacity: .9; }
+}

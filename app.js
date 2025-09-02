@@ -9,13 +9,10 @@ const tableBody = document.querySelector('#resultTable tbody');
 const exportCsvBtn = document.getElementById('exportCsvBtn');
 const clearBtn = document.getElementById('clearBtn');
 
-// 固定サイズ: 100行 x 12列（No列は別）
 const ROWS = 100;
 const COLS = 12;
-
-// 2次元配列初期化
 let results = Array.from({length: ROWS}, () => Array(COLS).fill(''));
-let currentIndex = 0; // 0..(ROWS*COLS-1)
+let currentIndex = 0;
 
 updateProgress();
 renderTable();
@@ -27,38 +24,27 @@ cameraInput.addEventListener('change', async (e) => {
   const number = OCR.pickCardNumber(text);
   ocrResultEl.textContent = number || '（未検出）';
   manualInput.value = '';
-  // 入力欄に自動フォーカス
   manualInput.focus();
 });
 
 confirmBtn.addEventListener('click', () => {
-  if (currentIndex >= ROWS * COLS) return; // これ以上は記録しない（12列 x 100行）
-
+  if (currentIndex >= ROWS * COLS) return;
   const number = (manualInput.value || ocrResultEl.textContent || '').trim();
   if (!number || number === '（未検出）') return;
-
-  const col = Math.floor(currentIndex / ROWS);    // 列優先（0..11）
-  const row = currentIndex % ROWS;                // 行（0..99）
-
-  // 追記 or 置換
+  const col = Math.floor(currentIndex / ROWS);
+  const row = currentIndex % ROWS;
   if (results[row][col]) {
     results[row][col] = results[row][col] + '/' + number;
   } else {
     results[row][col] = number;
   }
-
   renderTable();
-
-  // 進み方：appendStay がONなら同じセルに留まる
   if (!appendStay.checked) {
-    currentIndex = Math.min(currentIndex + 1, ROWS * COLS); // 次のセルへ
+    currentIndex = Math.min(currentIndex + 1, ROWS * COLS);
   }
   updateProgress();
-
   exportCsvBtn.disabled = false;
   clearBtn.disabled = false;
-
-  // 次の撮影に備えてリセット
   cameraInput.value = '';
   ocrResultEl.textContent = '';
   manualInput.value = '';
@@ -71,8 +57,8 @@ skipBtn.addEventListener('click', () => {
 });
 
 function updateProgress(){
-  const col = Math.floor(currentIndex / ROWS) + 1; // 1..12
-  const row = (currentIndex % ROWS) + 1;           // 1..100
+  const col = Math.floor(currentIndex / ROWS) + 1;
+  const row = (currentIndex % ROWS) + 1;
   const filled = countFilled();
   progressEl.textContent = `列 ${col} / 行 ${row}（1列=${ROWS}） 合計 ${filled}`;
 }
@@ -100,7 +86,6 @@ function renderTable(){
   }
 }
 
-// CSV出力（No + 12列、100行固定）
 exportCsvBtn.addEventListener('click', () => {
   let csv = 'No,' + Array.from({length:COLS},(_,i)=>`${i+1}`).join(',') + '\n';
   for (let r=0; r<ROWS; r++){
@@ -136,7 +121,6 @@ function csvEsc(s){
   return t;
 }
 
-// PWA install
 let deferredPrompt;
 const installBtn = document.getElementById('installBtn');
 window.addEventListener('beforeinstallprompt',(e)=>{
